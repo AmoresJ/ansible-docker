@@ -1,0 +1,35 @@
+---
+- hosts: all
+  tasks:
+    #- name: Generate key
+    #  openssh_keypair:
+    #    path: app
+    - name: Create user 'app'
+      user:
+        name: app
+        home: /home/app
+    - name: Create directory '.ssh' which contains the keys
+      file: 
+        path: /home/app/.ssh
+        state: directory
+        owner: app
+        mode: '0700'
+    - name: Copy ssh private key
+      copy:
+        src: app
+        dest: /home/app/.ssh/app
+        owner: app
+        mode: '0600'
+    - name: Copy ssh public key
+      copy:
+        src: app.pub
+        dest: /home/app/.ssh/app.pub
+        owner: app
+        mode: '0600'
+    - name: Set ssh key to user 'app'
+      user:
+        name: app.pub
+        ssh_key_file: .ssh/app.pub
+        ssh_key_passphrase: 12345
+
+       
